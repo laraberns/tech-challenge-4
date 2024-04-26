@@ -1,9 +1,15 @@
-import React from 'react'
+import React from 'react';
+import TemplateLogin from '../templates/login';
 
-export default function FrameLogin(nextAction) {
+const FrameLogin = ({ nextAction }) => { 
   return (
-    <div>
-      <h1>Login</h1>
-    </div>
-  )
+    <TemplateLogin 
+      title={'Login'} 
+      buttonTitle={'Entrar'} 
+      redirectTitle={'Não possui uma conta? Cadastre-se'}
+      redirectStage={'register'}
+    /> 
+  );
 }
+
+export default FrameLogin;

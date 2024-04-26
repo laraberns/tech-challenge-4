@@ -1,9 +1,15 @@
-import React from 'react'
+import React from 'react';
+import TemplateLogin from '../templates/login';
 
-export default function FrameRegister(nextAction) {
+const FrameRegister = ({ nextAction }) => { 
   return (
-    <div>
-      <h1>register</h1>
-    </div>
-  )
+    <TemplateLogin 
+      title={'Registre-se'} 
+      buttonTitle={'Cadastrar'} 
+      redirectTitle={'Já possui uma conta? Faça login'}
+      redirectStage={'login'}
+    /> 
+  );
 }
+
+export default FrameRegister

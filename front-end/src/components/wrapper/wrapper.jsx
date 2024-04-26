@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useAppState } from "@/context/appProvider";
-import FrameRegister from "../register";
-import FrameLogin from "../login";
+import FrameRegister from "../frames/register";
+import FrameLogin from "../frames/login";
 
 export default function Wrapper() {
   const { stage } = useAppState();
@@ -17,7 +17,7 @@ export default function Wrapper() {
       register: <FrameRegister nextAction={actionButton} />,
       login: <FrameLogin nextAction={actionButton} />,
     }),
-    [actionButton]
+    []
   );
 
   useEffect(() => {
