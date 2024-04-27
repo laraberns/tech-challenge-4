@@ -11,7 +11,6 @@ export default function Wrapper() {
     console.log("Action Button Clicked!");
   };
 
-  // Definindo os frames usando useMemo para evitar recriação desnecessária
   const frames = useMemo(
     () => ({
       register: <FrameRegister nextAction={actionButton} />,
