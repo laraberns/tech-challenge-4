@@ -1,29 +1,22 @@
 import React, { useState } from 'react';
-import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
-import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import SportsBaseballIcon from '@mui/icons-material/SportsBaseball';
 import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
 import { useAppDispatch } from '@/context/appProvider';
-import img from '@/assets/logo.png'
-import Image from 'next/image';
 import { FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { TimePicker } from '@mui/x-date-pickers';
+import WrapperContent from '../wrapper/wrapperContent';
 
 const FrameUserHome = ({ nextAction }) => {
     const dispatch = useAppDispatch();
     const [errorMessage, setErrorMessage] = useState('');
-    const [quadra, setQuadra] = React.useState('');
-
-    const handleChangeSelectQuadra = (event) => {
-        setQuadra(event.target.value);
-    };
+    const [quadra, setQuadra] = useState('');
+    const [timeQuant, setTimeQuant] = useState('');
+    const [initialTime, setInitialTime] = useState('');
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -38,85 +31,93 @@ const FrameUserHome = ({ nextAction }) => {
     };
 
     return (
-        <Box>
-            <Container maxWidth="xs">
-                <Box
-                    sx={{
-                        marginTop: 8,
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                    }}
-                >
-                    <Image src={img} alt="Logo" style={{ marginBottom: '20px', width: '150px', height: '75px' }} />
-                    <Avatar sx={{ m: 1, bgcolor: 'green' }}>
-                        <SportsBaseballIcon />
-                    </Avatar>
-                    <Typography component="h2" variant="h5">
-                        Faça sua reserva
+        <WrapperContent text="Faça a sua reserva" icon={<SportsBaseballIcon />} bgcolorAvatar='green'>
+            <Box component="form" onSubmit={handleSubmit} >
+                <FormControl fullWidth >
+                    <InputLabel id="selectQuadraLabel">Selecione uma quadra</InputLabel>
+                    <Select
+                        labelId="selectQuadraLabel"
+                        id="selectQuadra"
+                        value={quadra}
+                        label="Selecione uma quadra"
+                        onChange={(event) => setQuadra(event.target.value)}
+                    >
+                        <MenuItem value="Quadra de Futebol">Quadra de Futebol</MenuItem>
+                        <MenuItem value="Quadra de Vôlei">Quadra de Vôlei</MenuItem>
+                        <MenuItem value="Quadra de Tênis">Quadra de Tênis</MenuItem>
+                    </Select>
+                </FormControl>
+                <LocalizationProvider dateAdapter={AdapterDayjs} >
+                    <DemoContainer components={['DatePicker']} sx={{ flexDirection: '' }}>
+                        <DatePicker label="Selecione o dia" />
+                    </DemoContainer>
+                </LocalizationProvider>
+                <FormControl fullWidth sx={{ marginTop: 2 }}>
+                    <InputLabel id="selectInitialLabel">Selecione o tempo de reserva</InputLabel>
+                    <Select
+                        labelId="selectInitialLabel"
+                        id="selectInitialTime"
+                        value={initialTime}
+                        label="Selecione o tempo de reserva"
+                        onChange={(event) => setInitialTime(event.target.value)}
+                    >
+                        <MenuItem value="1">1 hora</MenuItem>
+                        <MenuItem value="2">2 horas</MenuItem>
+                        <MenuItem value="4">4 horas</MenuItem>
+                        <MenuItem value="5">5 horas</MenuItem>
+                        <MenuItem value="6">6 horas</MenuItem>
+                        <MenuItem value="7">7 horas</MenuItem>
+                        <MenuItem value="8">8 horas</MenuItem>
+                    </Select>
+                </FormControl>
+                <FormControl fullWidth sx={{ marginTop: 2 }}>
+                    <InputLabel id="selectTimeQuant">Selecione o horário inicial</InputLabel>
+                    <Select
+                        labelId="selectTimeQuant"
+                        id="selectTimeQuantInput"
+                        value={timeQuant}
+                        label="Selecione o horário inicial"
+                        onChange={(event) => setTimeQuant(event.target.value)}
+                    >
+                        <MenuItem value="10:00">10:00</MenuItem>
+                        <MenuItem value="11:00">11:00</MenuItem>
+                        <MenuItem value="12:00">12:00</MenuItem>
+                        <MenuItem value="13:00">13:00</MenuItem>
+                        <MenuItem value="14:00">14:00</MenuItem>
+                        <MenuItem value="15:00">15:00</MenuItem>
+                        <MenuItem value="16:00">16:00</MenuItem>
+                        <MenuItem value="17:00">17:00</MenuItem>
+                        <MenuItem value="18:00">18:00</MenuItem>
+                        <MenuItem value="19:00">19:00</MenuItem>
+                        <MenuItem value="20:00">20:00</MenuItem>
+                    </Select>
+                </FormControl>
+                <TextField
+                    id="Observacoes"
+                    label="Observações"
+                    multiline
+                    rows={4}
+                    fullWidth
+                    sx={{ marginTop: 1 }}
+                />
+                {errorMessage && (
+                    <Typography variant="body2" color="error" align="center">
+                        {errorMessage}
                     </Typography>
-                    <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 3 }}>
-                        <FormControl fullWidth>
-                            <InputLabel id="selectQuadra">Selecione uma quadra</InputLabel>
-                            <Select
-                                labelId="selectQuadra"
-                                id="selectQuadraInput"
-                                value={quadra}
-                                label="Selecione uma quadra"
-                                onChange={handleChangeSelectQuadra}
-                            >
-                                <MenuItem value={10}>Quadra de Futebol</MenuItem>
-                                <MenuItem value={20}>Quadra de Vôlei</MenuItem>
-                                <MenuItem value={30}>Quadra de Tênis</MenuItem>
-                            </Select>
-                        </FormControl>
-                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DemoContainer components={['DatePicker']}>
-                                <DatePicker label="Selecione o dia" />
-                            </DemoContainer>
-                        </LocalizationProvider>
-                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DemoContainer components={['TimePicker', 'TimePicker']}>
-                                <TimePicker
-                                    label="Horário inicial"
-                                />
-                                <TimePicker
-                                    label="Horário final"
-                                />
-                            </DemoContainer>
-                        </LocalizationProvider>
-                        <TextField
-                            id="Observacoes"
-                            label="Observações"
-                            multiline
-                            rows={4}
-                            fullWidth
-                            sx={{ marginTop: 1 }}
-                        />
-                        {errorMessage && (
-                            <Typography variant="body2" color="error" align="center">
-                                {errorMessage}
-                            </Typography>
-                        )}
-                        <Button
-                            type="submit"
-                            fullWidth
-                            variant="contained"
-                            sx={{ mt: 3, mb: 2 }}
-                        >
-                            Reservar
-                        </Button>
-                        <Grid container>
-                            <Grid item>
-                                <Button onClick={() => { dispatch({ type: 'SET_STAGE', payload: 'userReservations' }) }}>
-                                    Já possui reserva? Clique aqui
-                                </Button>
-                            </Grid>
-                        </Grid>
-                    </Box>
-                </Box>
-            </Container>
-        </Box>
+                )}
+                <Button
+                    type="submit"
+                    fullWidth
+                    variant="contained"
+                    sx={{ mt: 3, mb: 2 }}
+                >
+                    Reservar
+                </Button>
+                <Button onClick={() => { dispatch({ type: 'SET_STAGE', payload: 'userReservations' }) }}>
+                    Já possui reserva? Clique aqui
+                </Button>
+            </Box>
+        </WrapperContent>
     );
 };
 

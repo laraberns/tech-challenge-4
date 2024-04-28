@@ -25,5 +25,5 @@ export default function Wrapper() {
     setNextStageContent(frames[stage]);
   }, [frames, stage]);
 
-  return <>{nextStageContent}</>;
+  return <> {nextStageContent} </>
 }
