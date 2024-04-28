@@ -3,6 +3,7 @@ import { useAppState } from "@/context/appProvider";
 import FrameRegister from "../frames/register";
 import FrameLogin from "../frames/login";
 import FrameUserHome from "../frames/userHome";
+import FrameUserReservations from "../frames/userReservations";
 
 export default function Wrapper() {
   const { stage } = useAppState();
@@ -17,6 +18,7 @@ export default function Wrapper() {
       register: <FrameRegister nextAction={actionButton} />,
       login: <FrameLogin nextAction={actionButton} />,
       userHome: <FrameUserHome nextAction={actionButton} />,
+      userReservations: <FrameUserReservations nextAction={actionButton} />,
     }),
     []
   );

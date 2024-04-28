@@ -113,10 +113,13 @@ const FrameUserHome = ({ nextAction }) => {
                 >
                     Reservar
                 </Button>
-                <Button onClick={() => { dispatch({ type: 'SET_STAGE', payload: 'userReservations' }) }}>
+            </Box>
+            <Button onClick={() => { dispatch({ type: 'SET_STAGE', payload: 'userReservations' }) }}>
                     Já possui reserva? Clique aqui
                 </Button>
-            </Box>
+                <Button variant="contained" color="error" onClick={() => { dispatch({ type: 'SET_STAGE', payload: 'login' }) }}>
+                    Sair
+                </Button>
         </WrapperContent>
     );
 };
