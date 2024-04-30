@@ -21,7 +21,6 @@ const FrameLogin = ({ nextAction }) => {
       setErrorMessage('Email e/ou senha incorretos. Tente novamente');
     } else {
       setErrorMessage('')
-      console.log('Usuário autenticado com sucesso!')
     }
   };
 
@@ -46,7 +45,7 @@ const FrameLogin = ({ nextAction }) => {
           id="password"
         />
         {errorMessage && (
-          <Typography variant="body2" color="error" align="center">
+          <Typography variant="body1" color="error" align="center">
             {errorMessage}
           </Typography>
         )}

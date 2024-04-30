@@ -130,7 +130,6 @@ const FrameUserReservations = ({ nextAction }) => {
                         Cancelar
                     </Button>
                     <Button onClick={() => {
-                        console.log('Reserva excluída');
                         handleCloseDeleteModal();
                     }} color="error">
                         Confirmar
@@ -215,7 +214,7 @@ const FrameUserReservations = ({ nextAction }) => {
                             sx={{ marginTop: 1 }}
                         />
                         {errorMessage && (
-                            <Typography variant="body2" color="error" align="center">
+                            <Typography variant="body1" color="error" align="center">
                                 {errorMessage}
                             </Typography>
                         )}
@@ -227,7 +226,6 @@ const FrameUserReservations = ({ nextAction }) => {
                         Cancelar
                     </Button>
                     <Button onClick={() => {
-                        console.log('Reserva alterada');
                         handleCloseAlterModal();
                     }} color="error">
                         Confirmar

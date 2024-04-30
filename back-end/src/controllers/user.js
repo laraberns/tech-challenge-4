@@ -1,18 +1,31 @@
 const db = require('../models')
+const bcrypt = require('bcryptjs');
 
 //main Model
 const User = db.users
 
 // create user
 const newUser = async (req, res) => {
-    let info = {
-        email: req.body.email,
-        password: req.body.password,
-        type: req.body.type ? req.body.type : 'client'
+    const { email, password, type } = req.body;
+    try {
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        const user = await User.create({
+            email,
+            password: hashedPassword,
+            type: type ? type : 'client'
+        });
+
+        res.status(200).send({
+            id: user.id,
+            email: user.email,
+            type: user.type
+        });
+    } catch (error) {
+        res.status(500).send('Erro ao criar novo usuário. Tente novamente.');
     }
-    const user = await User.create(info)
-    res.status(200).send(user)
 }
+
 
 // get all users
 const getAllUsers = async (req, res) => {
@@ -21,11 +34,16 @@ const getAllUsers = async (req, res) => {
 }
 
 // get single user
-const getOneuser = async (req, res) => {
-    let id = req.params.id
-    const user = await User.findOne({ where: { id: id } })
-    res.status(200).send(user)
-}
+const getOneUser = async (req, res) => {
+    let email = req.params.email;
+    const user = await User.findOne({ where: { email: email } });
+    if (user) {
+        res.status(200).json({ status: true, message: 'Usuário já existe' });
+    } else {
+        res.status(200).json({ status: false, message: 'Usuário não existe' });
+    }
+};
+
 
 // update user
 const updateUser = async (req, res) => {
@@ -44,7 +62,7 @@ const deleteUser = async (req, res) => {
 module.exports = {
     newUser,
     getAllUsers,
-    getOneuser,
+    getOneUser,
     updateUser,
     deleteUser
 }

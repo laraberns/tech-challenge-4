@@ -1,20 +1,13 @@
-const express = require('express')
-const cors = require('cors')
-const app = express()
+const express = require('express');
+const cors = require('cors');
+const app = express();
 
-var corsOptions = {
-    origin: 'https:localhost:8081'
-}
+app.use(cors());
 
-// middleware
-app.use(cors(corsOptions))
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }))
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-//routers
-const userRouters = require('./routes/user')
+const userRouters = require('./routes/user');
+app.use('/api/users', userRouters);
 
-app.use('/api/users', userRouters)
-
-//server
-app.listen(8081, () => console.log('server is running on 8081'))
+app.listen(8081, () => console.log('server is running on 8081'));

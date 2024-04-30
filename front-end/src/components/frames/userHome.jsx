@@ -101,7 +101,7 @@ const FrameUserHome = ({ nextAction }) => {
                     sx={{ marginTop: 1 }}
                 />
                 {errorMessage && (
-                    <Typography variant="body2" color="error" align="center">
+                    <Typography variant="body1" color="error" align="center">
                         {errorMessage}
                     </Typography>
                 )}
