@@ -18,18 +18,18 @@ const FrameRegister = ({ nextAction }) => {
     const isValidPassword = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/.test(password);
     const isEmailEmpty = !email.trim();
     const isPasswordEmpty = !password.trim();
-  
+
     if (isEmailEmpty && isPasswordEmpty) {
-      setErrorMessage(''); 
+      setErrorMessage('');
     } else if (!isValidPassword) {
       setErrorMessage('A senha deve conter pelo menos um número, uma letra maiúscula e uma letra minúscula, e pelo menos 8 caracteres ou mais.');
     } else {
       setErrorMessage('');
     }
-  
+
     setIsSubmitDisabled(isEmailEmpty || isPasswordEmpty || !isValidPassword);
   }, [email, password]);
-  
+
   const verifyUserEmail = async (email) => {
     try {
       const response = await fetch(`http://localhost:8081/api/users/${email}`);
@@ -61,15 +61,14 @@ const FrameRegister = ({ nextAction }) => {
       throw error;
     }
   };
-  
+
   const handleSubmit = async (event) => {
     event.preventDefault();
-    
+
     try {
       const data = await verifyUserEmail(email);
       if (!data.status || Object.keys(data).length === 0) {
-        const newUser = await createUser(email, password);
-        console.log(newUser);
+        await createUser(email, password);
         setErrorMessage('Novo usuário cadastrado!');
       } else {
         setErrorMessage('E-mail já cadastrado.');
@@ -78,7 +77,7 @@ const FrameRegister = ({ nextAction }) => {
       setErrorMessage(error.message);
     }
   };
-  
+
 
   return (
     <WrapperContent text="Registre-se" icon={<LockOutlinedIcon />} bgcolorAvatar='purple'>

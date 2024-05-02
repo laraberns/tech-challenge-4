@@ -10,17 +10,36 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 const FrameLogin = ({ nextAction }) => {
   const dispatch = useAppDispatch();
   const [errorMessage, setErrorMessage] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
-  const handleSubmit = (event) => {
-    event.preventDefault(); 
-    const data = new FormData(event.currentTarget);
-    const email = data.get('email');
-    const password = data.get('password');
+  const handleSubmit = async (event) => {
+    event.preventDefault();
 
-    if (email !== 'example@example.com' || password !== '123456') {
-      setErrorMessage('Email e/ou senha incorretos. Tente novamente');
-    } else {
-      setErrorMessage('')
+    try {
+      const response = await fetch('http://localhost:8081/api/users/verifyUser', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email, password })
+      });
+
+      const responseData = await response.json()
+
+      if (!response.ok) {
+        throw new Error(responseData.message || 'Erro ao verificar usuário.');
+      }
+
+      if (response.status === 404 || response.status === 401) {
+        setErrorMessage('Email e/ou senha incorretos.');
+      } else if (response.status === 200) {
+        // Usuário autenticado com sucesso
+        setErrorMessage('')
+        dispatch({ type: 'SET_STAGE', payload: 'userHome' })
+      }
+    } catch (error) {
+      setErrorMessage(error.message || 'Erro ao verificar usuário.');
     }
   };
 
@@ -35,6 +54,7 @@ const FrameLogin = ({ nextAction }) => {
           label="Endereço de Email"
           autoComplete="email"
           autoFocus
+          onChange={(e) => setEmail(e.target.value)}
         />
         <TextField
           margin="normal"
@@ -43,6 +63,7 @@ const FrameLogin = ({ nextAction }) => {
           label="Senha"
           type="password"
           id="password"
+          onChange={(e) => setPassword(e.target.value)}
         />
         {errorMessage && (
           <Typography variant="body1" color="error" align="center">

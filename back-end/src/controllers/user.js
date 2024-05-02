@@ -1,7 +1,7 @@
 const db = require('../models')
 const bcrypt = require('bcryptjs');
 
-//main Model
+// main Model
 const User = db.users
 
 // create user
@@ -26,11 +26,27 @@ const newUser = async (req, res) => {
     }
 }
 
+// verify user
+const verifyUser = async (req, res) => {
+  const { email, password } = req.body;
 
-// get all users
-const getAllUsers = async (req, res) => {
-    let users = await User.findAll({})
-    res.status(200).send(users)
+  try {
+    const user = await User.findOne({ where: { email: email } });
+
+    if (!user) {
+      return res.status(404).json({ message: 'Credenciais incorretas.' });
+    }
+
+    const passwordMatch = await bcrypt.compare(password, user.password);
+
+    if (passwordMatch) {
+      res.status(200).json({ message: 'Senha correta.' });
+    } else {
+      res.status(401).json({ message: 'Credenciais incorretas.' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Erro interno do servidor.' });
+  }
 }
 
 // get single user
@@ -42,27 +58,10 @@ const getOneUser = async (req, res) => {
     } else {
         res.status(200).json({ status: false, message: 'Usuário não existe' });
     }
-};
-
-
-// update user
-const updateUser = async (req, res) => {
-    let id = req.params.id
-    const user = await User.update(req.body, { where: { id: id } })
-    res.status(200).send(user)
-}
-
-// delete user
-const deleteUser = async (req, res) => {
-    let id = req.params.id
-    await User.destroy({ where: { id: id } })
-    res.status(200).send('Product deleted!')
 }
 
 module.exports = {
     newUser,
-    getAllUsers,
     getOneUser,
-    updateUser,
-    deleteUser
+    verifyUser
 }
