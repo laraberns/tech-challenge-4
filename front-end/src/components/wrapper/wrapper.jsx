@@ -2,8 +2,9 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useAppState } from "@/context/appProvider";
 import FrameRegister from "../frames/register";
 import FrameLogin from "../frames/login";
-import FrameUserHome from "../frames/userHome";
 import FrameUserReservations from "../frames/userReservations";
+import FrameUserHome from "../frames/userHome";
+import FrameUserSchedule from "../frames/userSchedule";
 
 export default function Wrapper() {
   const { stage } = useAppState();
@@ -17,8 +18,9 @@ export default function Wrapper() {
     () => ({
       register: <FrameRegister nextAction={actionButton} />,
       login: <FrameLogin nextAction={actionButton} />,
-      userHome: <FrameUserHome nextAction={actionButton} />,
+      userSchedule: <FrameUserSchedule nextAction={actionButton} />,
       userReservations: <FrameUserReservations nextAction={actionButton} />,
+      userHome: <FrameUserHome nextAction={actionButton} />,
     }),
     []
   );

@@ -108,7 +108,7 @@ const FrameUserReservations = ({ nextAction }) => {
                     </Stack>
                 </CardContent>
             </StyledCard>
-            <Button onClick={() => { dispatch({ type: 'SET_STAGE', payload: 'userHome' }) }}>
+            <Button onClick={() => { dispatch({ type: 'SET_STAGE', payload: 'userSchedule' }) }}>
                 Deseja adicionar nova reserva? Clique aqui
             </Button>
             <Button variant="contained" color="error" onClick={() => { dispatch({ type: 'SET_STAGE', payload: 'login' }) }}>

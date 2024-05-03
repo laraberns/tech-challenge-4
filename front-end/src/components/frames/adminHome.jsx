@@ -3,7 +3,7 @@ import { useAppDispatch } from '@/context/appProvider';
 import WrapperContent from '../wrapper/wrapperContent';
 import { Button } from '@mui/material';
 
-const FrameUserHome = ({ nextAction }) => {
+const FrameAdminHome = ({ nextAction }) => {
     const dispatch = useAppDispatch();
 
     return (
@@ -13,23 +13,23 @@ const FrameUserHome = ({ nextAction }) => {
                 fullWidth
                 variant="contained"
                 color="success"
-                onClick={() => { dispatch({ type: 'SET_STAGE', payload: 'userSchedule' }) }}
+                onClick={() => { dispatch({ type: 'SET_STAGE', payload: 'adminCourts' }) }}
                 sx={{ mt: 1, mb: 2 }}
             >
-                Reservar
+                Gestão de Quadras
             </Button>
             <Button
                 type="submit"
                 fullWidth
                 variant="contained"
                 color="success"
-                onClick={() => { dispatch({ type: 'SET_STAGE', payload: 'userReservations' }) }}
+                onClick={() => { dispatch({ type: 'SET_STAGE', payload: 'adminReservations' }) }}
                 sx={{ mb: 2 }}
             >
-                Minhas reservas
+                Gestão de Reservas
             </Button>
         </WrapperContent>
     );
 };
 
-export default FrameUserHome;
+export default FrameAdminHome;

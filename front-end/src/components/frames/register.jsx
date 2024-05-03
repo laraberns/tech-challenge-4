@@ -22,7 +22,7 @@ const FrameRegister = ({ nextAction }) => {
     if (isEmailEmpty && isPasswordEmpty) {
       setErrorMessage('');
     } else if (!isValidPassword) {
-      setErrorMessage('A senha deve conter pelo menos um número, uma letra maiúscula e uma letra minúscula, e pelo menos 8 caracteres ou mais.');
+      setErrorMessage('A senha deve conter pelo menos um número, uma letra maiúscula e uma letra minúscula, e pelo menos 8 caracteres.');
     } else {
       setErrorMessage('');
     }

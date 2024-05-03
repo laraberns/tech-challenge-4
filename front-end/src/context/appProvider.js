@@ -17,7 +17,7 @@ const AppReducer = (state, action) => {
 // Provider principal
 export const AppProvider = ({ children }) => {
     // Inicializando o estado e o dispatch
-    const [state, dispatch] = useReducer(AppReducer, { stage: 'register' });
+    const [state, dispatch] = useReducer(AppReducer, { stage: 'userHome' });
 
     return (
         <AppStateContext.Provider value={state}>
