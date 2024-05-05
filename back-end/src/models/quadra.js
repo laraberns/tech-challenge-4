@@ -15,12 +15,12 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
             defaultValue: true
         },
-        preco: {
-            type: DataTypes.FLOAT,
+        horarioInicial: {
+            type: DataTypes.TIME, 
             allowNull: false
         },
-        capacidade: {
-            type: DataTypes.INTEGER,
+        horarioFinal: {
+            type: DataTypes.TIME,
             allowNull: false
         }
     });

@@ -13,7 +13,7 @@ const FrameAdminHome = ({ nextAction }) => {
                 fullWidth
                 variant="contained"
                 color="success"
-                onClick={() => { dispatch({ type: 'SET_STAGE', payload: 'adminCourts' }) }}
+                onClick={() => { dispatch({ type: 'SET_STAGE', payload: 'adminNewCourt' }) }}
                 sx={{ mt: 1, mb: 2 }}
             >
                 Gestão de Quadras
