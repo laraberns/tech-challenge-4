@@ -8,14 +8,38 @@ import { FormControl, FormControlLabel, InputLabel, MenuItem, Select, Switch, Te
 import WrapperContent from '../wrapper/wrapperContent';
 
 const FrameAdminNewCourt = ({ nextAction }) => {
-    const dispatch = useAppDispatch();
-    const [errorMessage, setErrorMessage] = useState('');
-    const [startTime, setStartTime] = useState('');
-    const [endTime, setEndTime] = useState('');
-    const [isActive, setIsActive] = useState(true);
+    const dispatch = useAppDispatch()
+    const [errorMessage, setErrorMessage] = useState('')
+    const [startTime, setStartTime] = useState('')
+    const [endTime, setEndTime] = useState('')
+    const [isActive, setIsActive] = useState(true)
+    const [obs, setObs] = useState('')
+    const [nameCourt, setNameCourt] = useState('')
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
+
+        try {
+            const response = await fetch('http://localhost:8081/api/quadras/addQuadra', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    nome: nameCourt,
+                    horarioInicial: startTime,
+                    horarioFinal: endTime,
+                    observacoes: obs,
+                    ativo: isActive
+                })
+            });
+
+            const responseData = await response.json();
+            setErrorMessage(responseData.message);
+
+        } catch (error) {
+            setErrorMessage(error.message || 'Erro ao adicionar nova quadra.');
+        }
     };
 
     const generateTimeOptions = () => {
@@ -32,7 +56,13 @@ const FrameAdminNewCourt = ({ nextAction }) => {
     return (
         <WrapperContent text="Adicione uma nova quadra" icon={<SportsBaseballIcon />} bgcolorAvatar='green'>
             <Box component="form" onSubmit={handleSubmit} sx={{ '& .MuiFormControl-root': { width: '100%', marginTop: 2 } }}>
-                <TextField margin="normal" required fullWidth id="court" label="Nome da quadra" autoFocus />
+            <TextField
+                    id="nome"
+                    label="Nome da quadra"
+                    fullWidth
+                    value={nameCourt}
+                    onChange={(e) => setNameCourt(e.target.value)}
+                />
                 <FormControl>
                     <InputLabel id="selectStartTime">Horário inicial da quadra</InputLabel>
                     <Select
@@ -55,7 +85,16 @@ const FrameAdminNewCourt = ({ nextAction }) => {
                         {generateTimeOptions()}
                     </Select>
                 </FormControl>
-                <TextField id="Observacoes" label="Observações" multiline rows={4} fullWidth sx={{ marginTop: 1 }} />
+                <TextField
+                    id="Observacoes"
+                    label="Observações"
+                    multiline
+                    rows={4}
+                    fullWidth
+                    sx={{ marginTop: 1 }}
+                    value={obs}
+                    onChange={(e) => setObs(e.target.value)}
+                />
                 <FormControlLabel
                     sx={{ marginTop: 1 }}
                     control={

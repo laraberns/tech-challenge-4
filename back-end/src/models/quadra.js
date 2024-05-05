@@ -22,7 +22,11 @@ module.exports = (sequelize, DataTypes) => {
         horarioFinal: {
             type: DataTypes.TIME,
             allowNull: false
-        }
+        },
+        observacoes: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
     });
 
     return Quadra;
