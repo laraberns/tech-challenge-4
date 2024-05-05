@@ -5,6 +5,7 @@ import FrameLogin from "../frames/login";
 import FrameUserReservations from "../frames/userReservations";
 import FrameUserHome from "../frames/userHome";
 import FrameUserSchedule from "../frames/userSchedule";
+import FrameAdminHome from "../frames/adminHome";
 
 export default function Wrapper() {
   const { stage } = useAppState();
@@ -21,6 +22,7 @@ export default function Wrapper() {
       userSchedule: <FrameUserSchedule nextAction={actionButton} />,
       userReservations: <FrameUserReservations nextAction={actionButton} />,
       userHome: <FrameUserHome nextAction={actionButton} />,
+      adminHome: <FrameAdminHome nextAction={actionButton} />,
     }),
     []
   );

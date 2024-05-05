@@ -28,6 +28,9 @@ const FrameUserHome = ({ nextAction }) => {
             >
                 Minhas reservas
             </Button>
+            <Button variant="contained" color="error" onClick={() => { dispatch({ type: 'SET_STAGE', payload: 'login' }) }}>
+               Sair
+            </Button>
         </WrapperContent>
     );
 };

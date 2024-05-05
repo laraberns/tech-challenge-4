@@ -28,6 +28,9 @@ const FrameAdminHome = ({ nextAction }) => {
             >
                 Gestão de Reservas
             </Button>
+            <Button variant="contained" color="error" onClick={() => { dispatch({ type: 'SET_STAGE', payload: 'login' }) }}>
+               Sair
+            </Button>
         </WrapperContent>
     );
 };

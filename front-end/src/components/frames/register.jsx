@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
@@ -12,38 +12,10 @@ const FrameRegister = ({ nextAction }) => {
   const [errorMessage, setErrorMessage] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
 
-  useEffect(() => {
-    const isValidPassword = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/.test(password);
-    const isEmailEmpty = !email.trim();
-    const isPasswordEmpty = !password.trim();
-
-    if (isEmailEmpty && isPasswordEmpty) {
-      setErrorMessage('');
-    } else if (!isValidPassword) {
-      setErrorMessage('A senha deve conter pelo menos um número, uma letra maiúscula e uma letra minúscula, e pelo menos 8 caracteres.');
-    } else {
-      setErrorMessage('');
-    }
-
-    setIsSubmitDisabled(isEmailEmpty || isPasswordEmpty || !isValidPassword);
-  }, [email, password]);
-
-  const verifyUserEmail = async (email) => {
-    try {
-      const response = await fetch(`http://localhost:8081/api/users/${email}`);
-      if (!response.ok) {
-        throw new Error('Erro ao verificar o email.');
-      }
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      throw new Error('Erro ao verificar o email. Tente novamente.');
-    }
-  };
-
-  const createUser = async (email, password) => {
+  const handleSubmit = async (event) => {
+    event.preventDefault(); 
+  
     try {
       const response = await fetch('http://localhost:8081/api/users/addUser', {
         method: 'POST',
@@ -52,32 +24,15 @@ const FrameRegister = ({ nextAction }) => {
         },
         body: JSON.stringify({ email, password })
       });
-      if (!response.ok) {
-        throw new Error('Erro ao cadastrar novo usuário.');
-      }
-      const newUser = await response.json();
-      return newUser;
+  
+      let responseData = await response.json();
+      setErrorMessage(responseData.message);
+     
     } catch (error) {
-      throw error;
+      setErrorMessage(error.message || 'Erro ao criar novo usuário.');
     }
   };
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-
-    try {
-      const data = await verifyUserEmail(email);
-      if (!data.status || Object.keys(data).length === 0) {
-        await createUser(email, password);
-        setErrorMessage('Novo usuário cadastrado!');
-      } else {
-        setErrorMessage('E-mail já cadastrado.');
-      }
-    } catch (error) {
-      setErrorMessage(error.message);
-    }
-  };
-
+  
 
   return (
     <WrapperContent text="Registre-se" icon={<LockOutlinedIcon />} bgcolorAvatar='purple'>
@@ -113,7 +68,6 @@ const FrameRegister = ({ nextAction }) => {
           fullWidth
           variant="contained"
           sx={{ mt: 2, mb: 2 }}
-          disabled={isSubmitDisabled}
         >
           Cadastrar
         </Button>

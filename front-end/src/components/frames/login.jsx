@@ -27,16 +27,13 @@ const FrameLogin = ({ nextAction }) => {
 
       const responseData = await response.json()
 
-      if (!response.ok) {
-        throw new Error(responseData.message || 'Erro ao verificar usuário.');
-      }
+      setErrorMessage(responseData.message);
 
-      if (response.status === 404 || response.status === 401) {
-        setErrorMessage('Email e/ou senha incorretos.');
-      } else if (response.status === 200) {
-        // Usuário autenticado com sucesso
+      if (response.status === 200) {
         setErrorMessage('')
-        dispatch({ type: 'SET_STAGE', payload: 'userHome' })
+        const { userType } = responseData
+        let stage = userType === 'admin' ? 'adminHome' : 'userHome';
+        dispatch({ type: 'SET_STAGE', payload: stage })
       }
     } catch (error) {
       setErrorMessage(error.message || 'Erro ao verificar usuário.');
