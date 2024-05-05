@@ -11,7 +11,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import WrapperContent from '../wrapper/wrapperContent';
 
-const FrameUserSchedule = ({ nextAction }) => {
+const FrameUserHome = ({ nextAction }) => {
     const dispatch = useAppDispatch();
     const [errorMessage, setErrorMessage] = useState('');
     const [quadra, setQuadra] = useState('');
@@ -124,4 +124,4 @@ const FrameUserSchedule = ({ nextAction }) => {
     );
 };
 
-export default FrameUserSchedule;
+export default FrameUserHome;

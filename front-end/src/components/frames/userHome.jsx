@@ -1,5 +1,5 @@
 import SportsBaseballIcon from '@mui/icons-material/SportsBaseball';
-import { useAppDispatch } from '@/context/appProvider';
+import { useAppDispatch } from '../../context/appProvider';
 import WrapperContent from '../wrapper/wrapperContent';
 import { Button } from '@mui/material';
 

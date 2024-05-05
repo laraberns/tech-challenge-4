@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { useAppState } from "@/context/appProvider";
+import { useAppState } from "../../context/appProvider";
 import FrameRegister from "../frames/register";
 import FrameLogin from "../frames/login";
 import FrameUserReservations from "../frames/userReservations";
@@ -7,6 +7,7 @@ import FrameUserHome from "../frames/userHome";
 import FrameUserSchedule from "../frames/userSchedule";
 import FrameAdminHome from "../frames/adminHome";
 import FrameAdminNewCourt from "../frames/adminNewCourt";
+import FrameAdminCourts from "../frames/adminCourts";
 
 export default function Wrapper() {
   const { stage } = useAppState();
@@ -25,6 +26,7 @@ export default function Wrapper() {
       userHome: <FrameUserHome nextAction={actionButton} />,
       adminHome: <FrameAdminHome nextAction={actionButton} />,
       adminNewCourt: <FrameAdminNewCourt nextAction={actionButton} />,
+      adminCourts: <FrameAdminCourts nextAction={actionButton} />,
     }),
     []
   );

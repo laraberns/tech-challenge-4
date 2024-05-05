@@ -3,9 +3,10 @@ import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import SportsBaseballIcon from '@mui/icons-material/SportsBaseball';
 import Typography from '@mui/material/Typography';
-import { useAppDispatch } from '@/context/appProvider';
+import { useAppDispatch } from '../../context/appProvider';
 import { FormControl, FormControlLabel, InputLabel, MenuItem, Select, Switch, TextField } from '@mui/material';
 import WrapperContent from '../wrapper/wrapperContent';
+import { generateTimeOptions } from '@/utils/timeFormatter';
 
 const FrameAdminNewCourt = ({ nextAction }) => {
     const dispatch = useAppDispatch()
@@ -40,17 +41,6 @@ const FrameAdminNewCourt = ({ nextAction }) => {
         } catch (error) {
             setErrorMessage(error.message || 'Erro ao adicionar nova quadra.');
         }
-    };
-
-    const generateTimeOptions = () => {
-        const options = [];
-        for (let hour = 0; hour < 24; hour++) {
-            const hourStr = hour < 10 ? `0${hour}` : `${hour}`;
-            options.push(
-                <MenuItem key={hour} value={`${hourStr}:00`}>{`${hourStr}:00`}</MenuItem>
-            );
-        }
-        return options;
     };
 
     return (
@@ -106,14 +96,14 @@ const FrameAdminNewCourt = ({ nextAction }) => {
                     }
                     label="Quadra ativa"
                 />
+                <Button type="submit" fullWidth variant="contained" sx={{ mt: 2, mb: 2 }}>
+                    Adicionar
+                </Button>
                 {errorMessage && (
                     <Typography variant="body1" color="error" align="center">
                         {errorMessage}
                     </Typography>
                 )}
-                <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
-                    Adicionar
-                </Button>
             </Box>
             <Box sx={{ display: 'flex', gap: 1 }}>
                 <Button variant="contained" color="success" onClick={() => { dispatch({ type: 'SET_STAGE', payload: 'adminHome' }) }}>

@@ -4,7 +4,7 @@ import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
-import { useAppDispatch } from '@/context/appProvider';
+import { useAppDispatch } from '../../context/appProvider';
 import WrapperContent from '../wrapper/wrapperContent';
 
 const FrameRegister = ({ nextAction }) => {
