@@ -34,6 +34,7 @@ db.sequelize = sequelize
 
 db.users = require('./user')(sequelize, DataTypes)
 db.quadras = require('./quadra')(sequelize, DataTypes)
+db.reservas = require('./reserva')(sequelize, DataTypes)
 
 db.sequelize.sync({ force: false })
 .then(() => {

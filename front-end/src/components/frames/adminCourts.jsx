@@ -4,7 +4,7 @@ import Box from '@mui/material/Box';
 import SportsBaseballIcon from '@mui/icons-material/SportsBaseball';
 import Typography from '@mui/material/Typography';
 import { useAppDispatch } from '../../context/appProvider';
-import { Card, CardContent, Dialog, DialogTitle, DialogContent, DialogActions, TextField, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import { Card, CardContent, Dialog, DialogTitle, DialogContent, DialogActions, TextField, FormControl, InputLabel, Select, MenuItem, FormControlLabel, Switch } from '@mui/material';
 import WrapperContent from '../wrapper/wrapperContent';
 import { Delete, Edit } from '@mui/icons-material';
 import { generateTimeOptions } from '@/utils/timeFormatter';
@@ -151,7 +151,7 @@ const FrameAdminNewCourt = ({ nextAction }) => {
                             labelId="selectEndTime"
                             value={editedQuadra.horarioFinal}
                             onChange={(e) => setEditedQuadra({ ...editedQuadra, horarioFinal: e.target.value })}
-                            label="Horário Finall"
+                            label="Horário Final"
                         >
                             {generateTimeOptions()}
                         </Select>
@@ -161,6 +161,17 @@ const FrameAdminNewCourt = ({ nextAction }) => {
                         value={editedQuadra.observacoes}
                         onChange={(e) => setEditedQuadra({ ...editedQuadra, observacoes: e.target.value })}
                         fullWidth
+                    />
+                    <FormControlLabel
+                        sx={{ marginTop: 1 }}
+                        control={
+                            <Switch
+                                checked={editedQuadra.ativo}
+                                onChange={(e) => setEditedQuadra({ ...editedQuadra, ativo: e.target.checked })}
+                                name="isActive"
+                            />
+                        }
+                        label="Quadra ativa"
                     />
                 </DialogContent>
                 <DialogActions>

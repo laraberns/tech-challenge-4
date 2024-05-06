@@ -9,6 +9,8 @@ const AppReducer = (state, action) => {
     switch (action.type) {
         case 'SET_STAGE':
             return { ...state, stage: action.payload };
+        case 'SET_USER_ID': // Adicione este caso para salvar o ID do usuário
+            return { ...state, userId: action.payload };
         default:
             throw new Error(`Unhandled action type: ${action.type}`);
     }
@@ -17,7 +19,7 @@ const AppReducer = (state, action) => {
 // Provider principal
 export const AppProvider = ({ children }) => {
     // Inicializando o estado e o dispatch
-    const [state, dispatch] = useReducer(AppReducer, { stage: 'userHome' });
+    const [state, dispatch] = useReducer(AppReducer, { stage: 'userSchedule' });
 
     return (
         <AppStateContext.Provider value={state}>

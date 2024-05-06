@@ -1,3 +1,5 @@
+// No FrameLogin.js
+
 import React, { useState } from 'react';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
@@ -27,13 +29,14 @@ const FrameLogin = ({ nextAction }) => {
 
       const responseData = await response.json()
 
-      setErrorMessage(responseData.message);
-
       if (response.status === 200) {
+        const { userId, userType } = responseData;
+        dispatch({ type: 'SET_USER_ID', payload: userId });
         setErrorMessage('')
-        const { userType } = responseData
         let stage = userType === 'admin' ? 'adminHome' : 'userHome';
-        dispatch({ type: 'SET_STAGE', payload: stage })
+        dispatch({ type: 'SET_STAGE', payload: stage });
+      } else {
+        setErrorMessage(responseData.message);
       }
     } catch (error) {
       setErrorMessage(error.message || 'Erro ao verificar usuário.');

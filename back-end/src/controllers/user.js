@@ -1,10 +1,8 @@
 const db = require('../models')
 const bcrypt = require('bcryptjs');
 
-// main Model
 const User = db.users
 
-// create user
 const newUser = async (req, res) => {
   const { email, password, type } = req.body;
 
@@ -34,7 +32,6 @@ const newUser = async (req, res) => {
   }
 }
 
-// verify user
 const verifyUser = async (req, res) => {
   const { email, password } = req.body;
 
@@ -49,7 +46,7 @@ const verifyUser = async (req, res) => {
 
     if (passwordMatch) {
       let userType = user.type;
-      res.status(200).json({ userType: userType });
+      res.status(200).json({ userType: userType, userId: user.id });
     } else {
       res.status(401).json({ message: 'Credenciais incorretas.' });
     }
@@ -58,8 +55,6 @@ const verifyUser = async (req, res) => {
   }
 }
 
-
-// get single user
 const getOneUser = async (req, res) => {
   let email = req.params.email;
   const user = await User.findOne({ where: { email: email } });

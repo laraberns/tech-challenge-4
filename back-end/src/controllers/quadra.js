@@ -1,9 +1,7 @@
 const db = require('../models')
 
-// Main Model
 const Quadra = db.quadras
 
-// Create Quadra
 const newQuadra = async (req, res) => {
     const { nome, horarioInicial, horarioFinal, observacoes } = req.body;
 
@@ -26,7 +24,6 @@ const newQuadra = async (req, res) => {
     }
 };
  
-// getAllQuadras
 const getAllQuadras = async (req, res) => {
     try {
         const quadras = await Quadra.findAll();
@@ -36,7 +33,6 @@ const getAllQuadras = async (req, res) => {
     }
 };
 
-// deleteQuadra
 const deleteQuadra = async (req, res) => {
     const { id } = req.params;
 
@@ -55,10 +51,9 @@ const deleteQuadra = async (req, res) => {
     }
 };
 
-// editQuadra
 const editQuadra = async (req, res) => {
     const { id } = req.params;
-    const { nome, horarioInicial, horarioFinal, observacoes } = req.body;
+    const { nome, horarioInicial, horarioFinal, observacoes, ativo } = req.body;
 
     try {
         const quadra = await Quadra.findByPk(id);
@@ -71,6 +66,7 @@ const editQuadra = async (req, res) => {
         quadra.horarioInicial = horarioInicial;
         quadra.horarioFinal = horarioFinal;
         quadra.observacoes = observacoes;
+        quadra.ativo = ativo;
 
         await quadra.save();
 
@@ -80,9 +76,26 @@ const editQuadra = async (req, res) => {
     }
 };
 
+const getQuadra = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const quadra = await Quadra.findByPk(id);
+
+        if (!quadra) {
+            return res.status(404).json({ message: 'Quadra não encontrada.' });
+        }
+
+        return res.status(200).json(quadra);
+    } catch (error) {
+        return res.status(500).json({ message: 'Erro ao buscar a quadra.' });
+    }
+};
+
 module.exports = {
     newQuadra,
     getAllQuadras,
     deleteQuadra,
-    editQuadra
+    editQuadra,
+    getQuadra
 };
