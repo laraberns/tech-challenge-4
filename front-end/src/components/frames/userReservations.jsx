@@ -167,7 +167,7 @@ const FrameUserReservations = ({ nextAction }) => {
                     <Button onClick={handleRemoveReserva}>Confirmar</Button>
                 </DialogActions>
             </Dialog>
-            <Button onClick={() => { dispatch({ type: 'SET_STAGE', payload: 'adminNewCourt' }) }}>
+            <Button onClick={() => { dispatch({ type: 'SET_STAGE', payload: 'userSchedule' }) }}>
                 Deseja adicionar nova Reserva? Clique aqui
             </Button>
             <Box sx={{ display: 'flex', gap: 1 }}>
