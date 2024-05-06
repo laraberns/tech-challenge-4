@@ -16,7 +16,6 @@ const newReserva = async (req, res) => {
     try {
         const { dataHoraInicio, dataHoraFinal, userId, quadraId, observacoes } = req.body;
 
-        // Obter horário de abertura e fechamento da quadra
         const quadra = await Quadra.findByPk(quadraId);
         if (!quadra) {
             return res.status(404).json({ message: 'Quadra não encontrada.' });
@@ -31,12 +30,10 @@ const newReserva = async (req, res) => {
         const quadraFechamento = new Date(dataHoraFinal);
         quadraFechamento.setUTCHours(parseInt(quadra.horarioFinal.split(':')[0]), parseInt(quadra.horarioFinal.split(':')[1]), 0, 0);
 
-        // Verificar se a reserva está dentro do horário de funcionamento da quadra
         if (horarioAbertura < quadraAbertura || horarioFechamento > quadraFechamento) {
             return res.status(400).json({ message: 'A reserva está fora do horário de funcionamento da quadra.' });
         }
 
-        // Verificar se a reserva se sobrepõe a reservas existentes
         const existingReservas = await Reserva.findAll({
             where: {
                 quadraId: quadraId
@@ -56,7 +53,6 @@ const newReserva = async (req, res) => {
             }
         }
 
-        // Criar a nova reserva
         const novaReserva = await Reserva.create({
             dataHoraInicio,
             dataHoraFinal,
@@ -87,7 +83,6 @@ const getAvailableTimesForDay = async (req, res) => {
         const horarioFechamento = new Date(dia);
         horarioFechamento.setUTCHours(parseInt(quadra.horarioFinal.split(':')[0]), parseInt(quadra.horarioFinal.split(':')[1]), 0, 0);  
 
-        // Obter reservas para a quadra no dia especificado
         const reservas = await Reserva.findAll({
             where: {
                 quadraId: quadraId,
@@ -97,7 +92,6 @@ const getAvailableTimesForDay = async (req, res) => {
             }
         })
 
-        // Calcular horários disponíveis
         const horariosDisponiveis = [];
         let horaAtual = new Date(horarioAbertura);
 
@@ -134,10 +128,45 @@ const getAvailableTimesForDay = async (req, res) => {
     } catch (error) {
         return res.status(500).json({ message: 'Erro ao buscar os horários disponíveis. Tente novamente.' });
     }
+}
+
+const getAllReservasByUserId = async (req, res) => {
+    try {
+        const { userId } = req.params; 
+
+        const reservas = await Reserva.findAll({
+            where: {
+                userId: userId
+            }
+        });
+
+        return res.status(200).json(reservas);
+    } catch (error) {
+        return res.status(500).json({ message: 'Erro ao buscar as reservas do usuário. Tente novamente.' });
+    }
+};
+
+const deleteReservaById = async (req, res) => {
+    try {
+        const { id } = req.params; 
+
+        const reserva = await Reserva.findByPk(id);
+        if (!reserva) {
+            return res.status(404).json({ message: 'Reserva não encontrada.' });
+        }
+
+        await reserva.destroy();
+
+        return res.status(200).json({ message: 'Reserva excluída com sucesso.' });
+    } catch (error) {
+        return res.status(500).json({ message: 'Erro ao excluir a reserva. Tente novamente.' });
+    }
 };
 
 module.exports = {
     getAvailableTimesForDay,
     getAllReservas,
-    newReserva
+    newReserva,
+    getAllReservasByUserId,
+    deleteReservaById
 };

@@ -1,237 +1,239 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
 import SportsBaseballIcon from '@mui/icons-material/SportsBaseball';
+import Typography from '@mui/material/Typography';
+import { useAppDispatch, useAppState } from '../../context/appProvider';
+import { Card, CardContent, Dialog, DialogTitle, DialogContent, DialogActions, TextField, FormControl, InputLabel, Select, MenuItem, FormControlLabel, Switch } from '@mui/material';
 import WrapperContent from '../wrapper/wrapperContent';
-import {
-    Card,
-    CardContent,
-    IconButton,
-    Stack,
-    styled,
-    Typography,
-    Modal,
-    Box,
-    Button,
-    FormControl,
-    InputLabel,
-    MenuItem,
-    Select,
-    TextField
-} from "@mui/material";
-import { Delete, Edit } from "@mui/icons-material";
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { useAppDispatch } from '../../context/appProvider';
+import { Delete, Edit } from '@mui/icons-material';
+import { generateTimeOptions } from '@/utils/timeFormatter';
 
 const FrameUserReservations = ({ nextAction }) => {
-    const [openDeleteModal, setOpenDeleteModal] = useState(false);
-    const [openAlterModal, setOpenAlterModal] = useState(false);
     const dispatch = useAppDispatch();
+    const { userId } = useAppState();
+    const [errorMessage, setErrorMessage] = useState('');
+    const [reservas, setReservas] = useState([]);
+    const [editDialogOpen, setEditDialogOpen] = useState(false);
+    const [removeDialogOpen, setRemoveDialogOpen] = useState(false);
+    const [selectedReserva, setSelectedReserva] = useState(null);
+    const [editedReserva, setEditedReserva] = useState({});
+    const [quadraNomes, setQuadraNomes] = useState([]);
 
-    const StyledCard = styled(Card)({
-        background: "#f0f0f0",
-        minWidth: '250px',
-        borderRadius: 5,
-        "&:hover": {
-            boxShadow: "0px 1px 5px 0px #6dcc93",
-            elevation: 20,
-        },
-    });
+    const getAllReservas = async () => {
+        try {
+            // Obter dados das reservas
+            const response = await fetch(`http://localhost:8081/api/reservas/${userId}`);
+            const reservasData = await response.json();
+            setReservas(reservasData);
 
-    const [quadra, setQuadra] = useState(''); // State for selected quadra
-    const [initialTime, setInitialTime] = useState(''); // State for selected initial time
-    const [timeQuant, setTimeQuant] = useState(''); // State for selected time quant
-    const [errorMessage, setErrorMessage] = useState(''); // State for error message
+            // Mapear os nomes das quadras
+            const quadraNames = {};
+            const quadraRequest = await fetch(`http://localhost:8081/api/quadras/allQuadras`);
+            const quadraData = await quadraRequest.json();
 
-    // Function to handle opening the delete modal
-    const handleOpenDeleteModal = () => {
-        setOpenDeleteModal(true);
+            reservasData.forEach(reserva => {
+                // Encontrar o nome da quadra correspondente
+                const quadra = quadraData.find(quadra => quadra.id === reserva.quadraId);
+                // Se encontrar a quadra, associar o nome à reserva
+                if (quadra) {
+                    quadraNames[reserva.id] = quadra.nome;
+                }
+            });
+
+            // Definir os nomes das quadras
+            setQuadraNomes(quadraNames);
+        } catch (error) {
+            setErrorMessage(error.message || 'Erro ao obter reservas.');
+        }
     };
 
-    // Function to handle closing the delete modal
-    const handleCloseDeleteModal = () => {
-        setOpenDeleteModal(false);
+    useEffect(() => {
+        getAllReservas();
+    }, []);
+
+    useEffect(() => {
+        getAllReservas();
+    }, []);
+
+    const handleEditClick = (reserva) => {
+        setSelectedReserva(reserva);
+        setEditedReserva({
+            ...reserva,
+            horarioInicial: reserva.dataHoraInicio.slice(11, 16),
+            horarioFinal: reserva.dataHoraFinal.slice(11, 16)
+        });
+        setEditDialogOpen(true);
     };
 
-    // Function to handle opening the alter modal
-    const handleOpenAlterModal = () => {
-        setOpenAlterModal(true);
+    const handleRemoveClick = (reserva) => {
+        setSelectedReserva(reserva);
+        setRemoveDialogOpen(true);
     };
 
-    // Function to handle closing the alter modal
-    const handleCloseAlterModal = () => {
-        setOpenAlterModal(false);
+    const handleEditReserva = async () => {
+        try {
+            const response = await fetch(`http://localhost:8081/api/reservas/${selectedReserva.id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(editedReserva)
+            });
+            const data = await response.json();
+            setErrorMessage(data.message);
+            setEditDialogOpen(false);
+            getAllReservas();
+        } catch (error) {
+            setErrorMessage(error.message || 'Erro ao editar Reserva.');
+        }
     };
 
-    // Function to handle form submission
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        // Implement form submission logic here
-    };
-
-    // Style for the modal
-    const modalStyle = {
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        width: 400,
-        bgcolor: 'background.paper',
-        border: '2px solid #000',
-        boxShadow: 24,
-        p: 4,
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 2
+    const handleRemoveReserva = async () => {
+        try {
+            const response = await fetch(`http://localhost:8081/api/reservas/${selectedReserva.id}`, {
+                method: 'DELETE'
+            });
+            const data = await response.json();
+            setErrorMessage(data.message);
+            setRemoveDialogOpen(false);
+            getAllReservas();
+        } catch (error) {
+            setErrorMessage(error.message || 'Erro ao remover Reserva.');
+        }
     };
 
     return (
         <WrapperContent text="Minhas reservas" icon={<SportsBaseballIcon />} bgcolorAvatar='green'>
-            <StyledCard raised={true} elevation={1}>
-                <CardContent>
-                    <Stack spacing={2}>
-                        <Typography variant="h5" component="div" color="#3cb371">
-                            Nome da quadra
-                        </Typography>
-                        <Typography variant="body1">Dia da reserva</Typography>
-                        <Typography variant="body1">Tempo da reserva</Typography>
-                        <Typography variant="body1">Horário da reserva</Typography>
-                        <Stack direction="row">
-                            <IconButton aria-label="edit" color="default" onClick={handleOpenAlterModal}>
-                                <Edit />
-                            </IconButton>
-                            <IconButton aria-label="delete" color="error" onClick={handleOpenDeleteModal}>
-                                <Delete />
-                            </IconButton>
-                        </Stack>
-                    </Stack>
-                </CardContent>
-            </StyledCard>
-            <Button onClick={() => { dispatch({ type: 'SET_STAGE', payload: 'userSchedule' }) }}>
-                Deseja adicionar nova reserva? Clique aqui
-            </Button>
-            <Button variant="contained" color="error" onClick={() => { dispatch({ type: 'SET_STAGE', payload: 'login' }) }}>
-               Sair
-            </Button>
-
-            {/* Modal for confirmation - delete*/}
-            <Modal
-                open={openDeleteModal}
-                onClose={handleCloseDeleteModal}
-                aria-labelledby="delete-modal-title"
-                aria-describedby="delete-modal-description"
-            >
-                <Box sx={modalStyle}>
-                    <Typography variant="body1" id="delete-modal-description">
-                        Tem certeza que deseja excluir esta reserva?
+            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                {reservas.length === 0 ? (
+                    <Typography variant="body1" color="textSecondary" align="center">
+                        Não há reservas ainda.
                     </Typography>
-                    <Button onClick={handleCloseDeleteModal} color="primary">
-                        Cancelar
-                    </Button>
-                    <Button onClick={() => {
-                        handleCloseDeleteModal();
-                    }} color="error">
-                        Confirmar
-                    </Button>
-                </Box>
-            </Modal>
-
-            {/* Modal for confirmation - alter*/}
-            <Modal
-                open={openAlterModal}
-                onClose={handleCloseAlterModal}
-                aria-labelledby="alter-modal-title"
-                aria-describedby="alter-modal-description"
-            >
-                <Box sx={modalStyle}>
-                    <Box component="form" onSubmit={handleSubmit}>
-                        <FormControl fullWidth>
-                            <InputLabel id="selectQuadraLabel">Selecione uma quadra</InputLabel>
-                            <Select
-                                labelId="selectQuadraLabel"
-                                id="selectQuadra"
-                                value={quadra}
-                                label="Selecione uma quadra"
-                                onChange={(event) => setQuadra(event.target.value)}
-                            >
-                                <MenuItem value="Quadra de Futebol">Quadra de Futebol</MenuItem>
-                                <MenuItem value="Quadra de Vôlei">Quadra de Vôlei</MenuItem>
-                                <MenuItem value="Quadra de Tênis">Quadra de Tênis</MenuItem>
-                            </Select>
-                        </FormControl>
-                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DemoContainer components={['DatePicker']} sx={{ flexDirection: '' }}>
-                                <DatePicker label="Selecione o dia" />
-                            </DemoContainer>
-                        </LocalizationProvider>
-                        <FormControl fullWidth sx={{ marginTop: 2 }}>
-                            <InputLabel id="selectInitialLabel">Selecione o tempo de reserva</InputLabel>
-                            <Select
-                                labelId="selectInitialLabel"
-                                id="selectInitialTime"
-                                value={initialTime}
-                                label="Selecione o tempo de reserva"
-                                onChange={(event) => setInitialTime(event.target.value)}
-                            >
-                                <MenuItem value="1">1 hora</MenuItem>
-                                <MenuItem value="2">2 horas</MenuItem>
-                                <MenuItem value="4">4 horas</MenuItem>
-                                <MenuItem value="5">5 horas</MenuItem>
-                                <MenuItem value="6">6 horas</MenuItem>
-                                <MenuItem value="7">7 horas</MenuItem>
-                                <MenuItem value="8">8 horas</MenuItem>
-                            </Select>
-                        </FormControl>
-                        <FormControl fullWidth sx={{ marginTop: 2 }}>
-                            <InputLabel id="selectTimeQuant">Selecione o horário inicial</InputLabel>
-                            <Select
-                                labelId="selectTimeQuant"
-                                id="selectTimeQuantInput"
-                                value={timeQuant}
-                                label="Selecione o horário inicial"
-                                onChange={(event) => setTimeQuant(event.target.value)}
-                            >
-                                <MenuItem value="10:00">10:00</MenuItem>
-                                <MenuItem value="11:00">11:00</MenuItem>
-                                <MenuItem value="12:00">12:00</MenuItem>
-                                <MenuItem value="13:00">13:00</MenuItem>
-                                <MenuItem value="14:00">14:00</MenuItem>
-                                <MenuItem value="15:00">15:00</MenuItem>
-                                <MenuItem value="16:00">16:00</MenuItem>
-                                <MenuItem value="17:00">17:00</MenuItem>
-                                <MenuItem value="18:00">18:00</MenuItem>
-                                <MenuItem value="19:00">19:00</MenuItem>
-                                <MenuItem value="20:00">20:00</MenuItem>
-                            </Select>
-                        </FormControl>
-                        <TextField
-                            id="Observacoes"
-                            label="Observações"
-                            multiline
-                            rows={4}
-                            fullWidth
-                            sx={{ marginTop: 1 }}
-                        />
-                        {errorMessage && (
-                            <Typography variant="body1" color="error" align="center">
-                                {errorMessage}
-                            </Typography>
-                        )}
-                    </Box>
-                    <Typography variant="body1" id="alter-modal-description">
-                        Tem certeza que deseja alterar esta reserva?
+                ) : (
+                    reservas.map((reserva) => (
+                        <Card key={reserva.id} sx={{ width: 300, marginBottom: 1 }}>
+                            <CardContent>
+                                <Typography variant="h6" component="div">
+                                    {quadraNomes[reserva.id]}
+                                </Typography>
+                                <Typography variant="body2">
+                                    Horário Inicial: {reserva.dataHoraInicio.slice(0, 10)} {reserva.dataHoraInicio.slice(11, 16)}
+                                </Typography>
+                                <Typography variant="body2">
+                                    Horário Final: {reserva.dataHoraFinal.slice(0, 10)} {reserva.dataHoraFinal.slice(11, 16)}
+                                </Typography>
+                                <Typography variant="body2">
+                                    Observações: {reserva.observacoes}
+                                </Typography>
+                                <Box sx={{ display: 'flex', gap: 1, mt: 1 }}>
+                                    <Button
+                                        variant="contained"
+                                        color="primary"
+                                        style={{ width: '30px', maxHeight: '30px', minWidth: '30px', minHeight: '30px' }}
+                                        onClick={() => handleEditClick(reserva)}>
+                                        <Edit />
+                                    </Button>
+                                    <Button variant="contained"
+                                        color="error"
+                                        style={{ maxWidth: '30px', maxHeight: '30px', minWidth: '30px', minHeight: '30px' }}
+                                        onClick={() => handleRemoveClick(reserva)}>
+                                        <Delete />
+                                    </Button>
+                                </Box>
+                            </CardContent>
+                        </Card>
+                    ))
+                )}
+                {errorMessage && (
+                    <Typography variant="body1" color="error" align="center">
+                        {errorMessage}
                     </Typography>
-                    <Button onClick={handleCloseAlterModal} color="primary">
-                        Cancelar
-                    </Button>
-                    <Button onClick={() => {
-                        handleCloseAlterModal();
-                    }} color="error">
-                        Confirmar
-                    </Button>
-                </Box>
-            </Modal>
+                )}
+            </Box>
+
+            <Dialog open={editDialogOpen} onClose={() => setEditDialogOpen(false)}>
+                <DialogTitle>Editar Reserva</DialogTitle>
+                <DialogContent>
+                    <TextField
+                        label="Nome"
+                        value={editedReserva.nome || ""}
+                        sx={{ marginBottom: '16px', marginTop: '16px' }}
+                        onChange={(e) => setEditedReserva({ ...editedReserva, nome: e.target.value })}
+                        fullWidth
+                    />
+                    <FormControl sx={{ width: "100%", marginBottom: '16px' }}>
+                        <InputLabel id="selectStartTime">Horário Inicial</InputLabel>
+                        <Select
+                            labelId="selectStartTime"
+                            value={editedReserva.horarioInicial || ""}
+                            onChange={(e) => setEditedReserva({ ...editedReserva, horarioInicial: e.target.value })}
+                            label="Horário Inicial"
+                        >
+                            {generateTimeOptions()}
+                        </Select>
+                    </FormControl>
+                    <FormControl sx={{ width: "100%", marginBottom: '16px' }}>
+                        <InputLabel id="selectEndTime">Horário Final</InputLabel>
+                        <Select
+                            labelId="selectEndTime"
+                            value={editedReserva.horarioFinal || ""}
+                            onChange={(e) => setEditedReserva({ ...editedReserva, horarioFinal: e.target.value })}
+                            label="Horário Final"
+                        >
+                            {generateTimeOptions()}
+                        </Select>
+                    </FormControl>
+                    <TextField
+                        label="Observações"
+                        value={editedReserva.observacoes || ""}
+                        onChange={(e) => setEditedReserva({ ...editedReserva, observacoes: e.target.value })}
+                        fullWidth
+                    />
+                    <FormControlLabel
+                        sx={{ marginTop: 1 }}
+                        control={
+                            <Switch
+                                checked={editedReserva.ativo || false}
+                                onChange={(e) => setEditedReserva({ ...editedReserva, ativo: e.target.checked })}
+                                name="isActive"
+                            />
+                        }
+                        label="Reserva ativa"
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setEditDialogOpen(false)}>Cancelar</Button>
+                    <Button onClick={handleEditReserva}>Salvar</Button>
+                </DialogActions>
+            </Dialog>
+            <Dialog open={removeDialogOpen} onClose={() => setRemoveDialogOpen(false)}>
+                <DialogTitle>Remover Reserva</DialogTitle>
+                <DialogContent>
+                    <Typography>Tem certeza que deseja remover a reserva do dia {selectedReserva?.dataHoraInicio.slice(0, 10)} às {selectedReserva?.dataHoraInicio.slice(11, 16)}h ?</Typography>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setRemoveDialogOpen(false)}>Cancelar</Button>
+                    <Button onClick={handleRemoveReserva}>Confirmar</Button>
+                </DialogActions>
+            </Dialog>
+            <Button onClick={() => { dispatch({ type: 'SET_STAGE', payload: 'adminNewCourt' }) }}>
+                Deseja adicionar nova Reserva? Clique aqui
+            </Button>
+            <Box sx={{ display: 'flex', gap: 1 }}>
+                <Button
+                    variant="contained"
+                    color="success"
+                    onClick={() => { dispatch({ type: 'SET_STAGE', payload: 'userHome' }) }}>
+                    Menu
+                </Button>
+                <Button
+                    variant="contained"
+                    color="error"
+                    onClick={() => { dispatch({ type: 'SET_STAGE', payload: 'login' }) }}>
+                    Sair
+                </Button>
+            </Box>
         </WrapperContent>
     );
 };
