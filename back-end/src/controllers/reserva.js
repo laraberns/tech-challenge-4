@@ -163,10 +163,31 @@ const deleteReservaById = async (req, res) => {
     }
 };
 
+const putReserva = async (req, res) => {
+    try {
+        const { id } = req.params; 
+        const { observacoes } = req.body; 
+
+        const reserva = await Reserva.findByPk(id);
+        if (!reserva) {
+            return res.status(404).json({ message: 'Reserva não encontrada.' });
+        }
+
+        reserva.observacoes = observacoes;
+        await reserva.save()
+
+        return res.status(200).json({ message: 'Reserva atualizada com sucesso.' });
+    } catch (error) {
+        return res.status(500).json({ message: 'Erro ao atualizar a reserva. Tente novamente.' });
+    }
+};
+
+
 module.exports = {
     getAvailableTimesForDay,
     getAllReservas,
     newReserva,
     getAllReservasByUserId,
-    deleteReservaById
+    deleteReservaById,
+    putReserva
 };

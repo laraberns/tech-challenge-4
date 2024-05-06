@@ -60,6 +60,7 @@ const FrameUserHome = ({ nextAction }) => {
                             value={day}
                             onChange={date => setDay(date)}
                         />
+                        
                     </DemoContainer>
                 </LocalizationProvider>
             ),

@@ -4,10 +4,9 @@ import Box from '@mui/material/Box';
 import SportsBaseballIcon from '@mui/icons-material/SportsBaseball';
 import Typography from '@mui/material/Typography';
 import { useAppDispatch, useAppState } from '../../context/appProvider';
-import { Card, CardContent, Dialog, DialogTitle, DialogContent, DialogActions, TextField, FormControl, InputLabel, Select, MenuItem, FormControlLabel, Switch } from '@mui/material';
+import { Card, CardContent, Dialog, DialogTitle, DialogContent, DialogActions, TextField } from '@mui/material';
 import WrapperContent from '../wrapper/wrapperContent';
 import { Delete, Edit } from '@mui/icons-material';
-import { generateTimeOptions } from '@/utils/timeFormatter';
 
 const FrameUserReservations = ({ nextAction }) => {
     const dispatch = useAppDispatch();
@@ -22,26 +21,21 @@ const FrameUserReservations = ({ nextAction }) => {
 
     const getAllReservas = async () => {
         try {
-            // Obter dados das reservas
             const response = await fetch(`http://localhost:8081/api/reservas/${userId}`);
             const reservasData = await response.json();
             setReservas(reservasData);
 
-            // Mapear os nomes das quadras
             const quadraNames = {};
             const quadraRequest = await fetch(`http://localhost:8081/api/quadras/allQuadras`);
             const quadraData = await quadraRequest.json();
 
             reservasData.forEach(reserva => {
-                // Encontrar o nome da quadra correspondente
                 const quadra = quadraData.find(quadra => quadra.id === reserva.quadraId);
-                // Se encontrar a quadra, associar o nome à reserva
                 if (quadra) {
                     quadraNames[reserva.id] = quadra.nome;
                 }
             });
 
-            // Definir os nomes das quadras
             setQuadraNomes(quadraNames);
         } catch (error) {
             setErrorMessage(error.message || 'Erro ao obter reservas.');
@@ -52,17 +46,9 @@ const FrameUserReservations = ({ nextAction }) => {
         getAllReservas();
     }, []);
 
-    useEffect(() => {
-        getAllReservas();
-    }, []);
-
     const handleEditClick = (reserva) => {
         setSelectedReserva(reserva);
-        setEditedReserva({
-            ...reserva,
-            horarioInicial: reserva.dataHoraInicio.slice(11, 16),
-            horarioFinal: reserva.dataHoraFinal.slice(11, 16)
-        });
+        setEditedReserva({...reserva});
         setEditDialogOpen(true);
     };
 
@@ -78,7 +64,9 @@ const FrameUserReservations = ({ nextAction }) => {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(editedReserva)
+                body: JSON.stringify({
+                    observacoes: editedReserva.observacoes
+                })
             });
             const data = await response.json();
             setErrorMessage(data.message);
@@ -88,7 +76,7 @@ const FrameUserReservations = ({ nextAction }) => {
             setErrorMessage(error.message || 'Erro ao editar Reserva.');
         }
     };
-
+    
     const handleRemoveReserva = async () => {
         try {
             const response = await fetch(`http://localhost:8081/api/reservas/${selectedReserva.id}`, {
@@ -154,52 +142,13 @@ const FrameUserReservations = ({ nextAction }) => {
 
             <Dialog open={editDialogOpen} onClose={() => setEditDialogOpen(false)}>
                 <DialogTitle>Editar Reserva</DialogTitle>
-                <DialogContent>
-                    <TextField
-                        label="Nome"
-                        value={editedReserva.nome || ""}
-                        sx={{ marginBottom: '16px', marginTop: '16px' }}
-                        onChange={(e) => setEditedReserva({ ...editedReserva, nome: e.target.value })}
-                        fullWidth
-                    />
-                    <FormControl sx={{ width: "100%", marginBottom: '16px' }}>
-                        <InputLabel id="selectStartTime">Horário Inicial</InputLabel>
-                        <Select
-                            labelId="selectStartTime"
-                            value={editedReserva.horarioInicial || ""}
-                            onChange={(e) => setEditedReserva({ ...editedReserva, horarioInicial: e.target.value })}
-                            label="Horário Inicial"
-                        >
-                            {generateTimeOptions()}
-                        </Select>
-                    </FormControl>
-                    <FormControl sx={{ width: "100%", marginBottom: '16px' }}>
-                        <InputLabel id="selectEndTime">Horário Final</InputLabel>
-                        <Select
-                            labelId="selectEndTime"
-                            value={editedReserva.horarioFinal || ""}
-                            onChange={(e) => setEditedReserva({ ...editedReserva, horarioFinal: e.target.value })}
-                            label="Horário Final"
-                        >
-                            {generateTimeOptions()}
-                        </Select>
-                    </FormControl>
+                <DialogContent style={{minWidth: '300px'}}>
                     <TextField
                         label="Observações"
                         value={editedReserva.observacoes || ""}
                         onChange={(e) => setEditedReserva({ ...editedReserva, observacoes: e.target.value })}
                         fullWidth
-                    />
-                    <FormControlLabel
-                        sx={{ marginTop: 1 }}
-                        control={
-                            <Switch
-                                checked={editedReserva.ativo || false}
-                                onChange={(e) => setEditedReserva({ ...editedReserva, ativo: e.target.checked })}
-                                name="isActive"
-                            />
-                        }
-                        label="Reserva ativa"
+                        sx={{marginTop: 1}}
                     />
                 </DialogContent>
                 <DialogActions>
@@ -207,6 +156,7 @@ const FrameUserReservations = ({ nextAction }) => {
                     <Button onClick={handleEditReserva}>Salvar</Button>
                 </DialogActions>
             </Dialog>
+
             <Dialog open={removeDialogOpen} onClose={() => setRemoveDialogOpen(false)}>
                 <DialogTitle>Remover Reserva</DialogTitle>
                 <DialogContent>

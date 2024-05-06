@@ -6,5 +6,6 @@ router.get('/allReservas', reservaController.getAllReservas)
 router.post('/availableTimes', reservaController.getAvailableTimesForDay)
 router.get('/:userId', reservaController.getAllReservasByUserId)
 router.delete('/:id', reservaController.deleteReservaById)
+router.put('/:id', reservaController.putReserva)
 
 module.exports = router
