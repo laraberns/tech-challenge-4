@@ -1,44 +1,22 @@
-const { Sequelize, DataTypes } = require('sequelize');
-const dbConfig = require('../config/dbConfig')
+const {Sequelize, DataTypes} = require('sequelize');
+const dbConfig = require('../config/dbConfig');
 
-const sequelize = new Sequelize(
-    dbConfig.database,
-    dbConfig.username,
-    dbConfig.password,
-    {
-        host: dbConfig.host,
-        dialect: dbConfig.dialect,
-        operatorsAliases: false,
+const sequelize = new Sequelize(dbConfig.database, dbConfig.username, dbConfig.password, {
+  host: dbConfig.host,
+  dialect: dbConfig.dialect,
+  pool: dbConfig.pool
+});
 
-        pool: {
-            max: dbConfig.pool.max,
-            min: dbConfig.pool.min,
-            acquire: dbConfig.pool.acquire,
-            idle: dbConfig.pool.idle
-        }
-    }
-);
+sequelize.authenticate().then(() => console.log('connected to db')).catch(err => console.log('Error:' + err));
 
-sequelize.authenticate()
-    .then(() => {
-        console.log('connected to db');
-    })
-    .catch(err => {
-        console.log('Error:' + err)
-    })
+const db = {
+  Sequelize,
+  sequelize,
+  users: require('./user')(sequelize, DataTypes),
+  quadras: require('./quadra')(sequelize, DataTypes),
+  reservas: require('./reserva')(sequelize, DataTypes)
+};
 
-const db = {}
+db.sequelize.sync({force: false}).then(() => console.log('yes, re-sync done!'));
 
-db.Sequelize = Sequelize
-db.sequelize = sequelize
-
-db.users = require('./user')(sequelize, DataTypes)
-db.quadras = require('./quadra')(sequelize, DataTypes)
-db.reservas = require('./reserva')(sequelize, DataTypes)
-
-db.sequelize.sync({ force: false })
-.then(() => {
-    console.log('yes, re-sync done!');
-})
-
-module.exports = db
+module.exports = db;
