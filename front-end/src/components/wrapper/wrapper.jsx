@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useAppState } from "../../context/appProvider";
 import FrameRegister from "../frames/register";
 import FrameLogin from "../frames/login";
@@ -39,5 +39,5 @@ export default function Wrapper() {
     setNextStageContent(frames[stage]);
   }, [frames, stage]);
 
-  return <> {nextStageContent} </>
+  return <>{nextStageContent}</>
 }
