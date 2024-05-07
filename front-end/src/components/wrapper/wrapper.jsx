@@ -8,6 +8,8 @@ import FrameUserSchedule from "../frames/userSchedule";
 import FrameAdminHome from "../frames/adminHome";
 import FrameAdminNewCourt from "../frames/adminNewCourt";
 import FrameAdminCourts from "../frames/adminCourts";
+import FrameAdminReservations from "../frames/adminReservations";
+import FrameAdminSchedule from "../frames/adminSchedule";
 
 export default function Wrapper() {
   const { stage } = useAppState();
@@ -27,6 +29,8 @@ export default function Wrapper() {
       adminHome: <FrameAdminHome nextAction={actionButton} />,
       adminNewCourt: <FrameAdminNewCourt nextAction={actionButton} />,
       adminCourts: <FrameAdminCourts nextAction={actionButton} />,
+      adminReservations: <FrameAdminReservations nextAction={actionButton} />,
+      adminSchedule: <FrameAdminSchedule nextAction={actionButton} />,
     }),
     []
   );

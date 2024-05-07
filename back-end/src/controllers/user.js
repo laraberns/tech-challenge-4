@@ -65,8 +65,18 @@ const getOneUser = async (req, res) => {
   }
 }
 
+const getAllUsers = async (req, res) => {
+  try {
+    const users = await User.findAll();
+    return res.status(200).json(users);
+  } catch (error) {
+    return res.status(500).json({ message: 'Erro ao buscar todos os usuários. Tente novamente.' });
+  }
+};
+
 module.exports = {
   newUser,
   getOneUser,
-  verifyUser
-}
+  verifyUser,
+  getAllUsers
+};

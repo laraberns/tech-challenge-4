@@ -3,7 +3,7 @@ import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import SportsBaseballIcon from '@mui/icons-material/SportsBaseball';
 import Typography from '@mui/material/Typography';
-import { useAppDispatch, useAppState } from '@/context/appProvider';
+import { useAppDispatch } from '@/context/appProvider';
 import { FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
@@ -15,7 +15,7 @@ import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
 import StepContent from '@mui/material/StepContent';
 
-const FrameUserHome = ({ nextAction }) => {
+const FrameAdminSchedule = ({ nextAction }) => {
     const dispatch = useAppDispatch();
     const [errorMessage, setErrorMessage] = useState('');
     const [quadras, setQuadras] = useState([]);
@@ -26,9 +26,31 @@ const FrameUserHome = ({ nextAction }) => {
     const [initialTime, setInitialTime] = useState('');
     const [availableTimes, setAvailableTimes] = useState([]);
     const [obs, setObs] = useState([]);
-    const { userId } = useAppState()
+    const [users, setUsers] = useState([]);
+    const [selectedUser, setSelectedUser] = useState([]);
 
     const steps = [
+        {
+            label: 'Selecionar userId',
+            input: (
+                <FormControl fullWidth >
+                    <InputLabel id="selectUserLabel">Selecione um usuário</InputLabel>
+                    <Select
+                        labelId="selectUserLabel"
+                        id="selectUser"
+                        value={selectedUser}
+                        label="Selecione um usuário"
+                        onChange={e => setSelectedUser(e.target.value)}
+                    >
+                        {users.map(user => (
+                            <MenuItem key={user.id} value={user.id}>
+                                {user.email} - Id:  {user.id}
+                            </MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
+            ),
+        },
         {
             label: 'Selecionar quadra',
             input: (
@@ -37,7 +59,7 @@ const FrameUserHome = ({ nextAction }) => {
                     <Select
                         labelId="selectQuadraLabel"
                         id="selectQuadra"
-                        value={selectedQuadra}
+                        value={selectedQuadra ? selectedQuadra : ''}
                         label="Selecione uma quadra"
                         onChange={e => setSelectedQuadra(e.target.value)}
                     >
@@ -60,7 +82,7 @@ const FrameUserHome = ({ nextAction }) => {
                             value={day}
                             onChange={date => setDay(date)}
                         />
-                        
+
                     </DemoContainer>
                 </LocalizationProvider>
             ),
@@ -75,7 +97,7 @@ const FrameUserHome = ({ nextAction }) => {
                             labelId="selectTimeQuant"
                             id="selectTimeQuantInput"
                             label="Selecione o tempo de reserva"
-                            value={timeQuant}
+                            value={timeQuant ? timeQuant : ''}
                             onChange={(event) => setTimeQuant(event.target.value)}
                         >
                             <MenuItem value="1">1 hora</MenuItem>
@@ -101,7 +123,7 @@ const FrameUserHome = ({ nextAction }) => {
                             labelId="selectTimeQuant"
                             id="selectTimeQuantInput"
                             label="Selecione o horário inicial"
-                            value={initialTime}
+                            value={initialTime ? initialTime : ''}
                             onChange={(event) => setInitialTime(event.target.value)}
                         >
                             {availableTimes.length > 0 ? (
@@ -129,7 +151,7 @@ const FrameUserHome = ({ nextAction }) => {
                     label="Observações"
                     multiline
                     rows={4}
-                    value={obs}
+                    value={obs ? obs : ''}
                     fullWidth
                     onChange={(event) => setObs(event.target.value)}
                     sx={{ marginTop: 1 }}
@@ -168,15 +190,32 @@ const FrameUserHome = ({ nextAction }) => {
     };
 
 
+    const getQuadras = async () => {
+        try {
+            const response = await fetch('http://localhost:8081/api/quadras/allQuadras');
+            const data = await response.json();
+            const activeQuadras = data.filter(quadra => quadra.ativo);
+            setQuadras(activeQuadras);
+        } catch (error) {
+            console.error('Error fetching active quadras:', error);
+        }
+    };
+
+    const getUsers = async () => {
+        try {
+            const response = await fetch('http://localhost:8081/api/users/all/users');
+            const data = await response.json();
+            setUsers(data)
+        } catch (error) {
+            console.error('Error fetching users:', error);
+        }
+    };
+
     useEffect(() => {
-        fetch('http://localhost:8081/api/quadras/allQuadras')
-            .then(response => response.json())
-            .then(data => {
-                const activeQuadras = data.filter(quadra => quadra.ativo);
-                setQuadras(activeQuadras);
-            })
-            .catch(error => console.error('Error fetching active quadras:', error));
-    }, [])
+        getQuadras()
+        getUsers()
+    }, []);
+
 
     useEffect(() => {
         if (day && selectedQuadra && timeQuant) {
@@ -193,7 +232,9 @@ const FrameUserHome = ({ nextAction }) => {
     };
 
     const handleSubmit = async (event) => {
-        event.preventDefault();
+        event.preventDefault()
+
+        console.log(selectedUser)
 
         try {
             const response = await fetch('http://localhost:8081/api/reservas/addReserva', {
@@ -204,7 +245,7 @@ const FrameUserHome = ({ nextAction }) => {
                 body: JSON.stringify({
                     dataHoraInicio: `${initialTime.horaInicio}`,
                     dataHoraFinal: `${initialTime.horaFinal}`,
-                    userId: userId,
+                    userId: selectedUser,
                     quadraId: selectedQuadra,
                     observacoes: obs
                 })
@@ -214,12 +255,12 @@ const FrameUserHome = ({ nextAction }) => {
                 throw new Error('Erro ao fazer a reserva');
             }
 
-            // Limpar campos ou fazer outra ação necessária após o sucesso
             setErrorMessage('');
             setDay(null);
             setSelectedQuadra('');
             setTimeQuant('');
             setInitialTime('');
+            setSelectedUser('');
             setObs('');
             setActiveStep(0);
 
@@ -233,7 +274,7 @@ const FrameUserHome = ({ nextAction }) => {
 
 
     return (
-        <WrapperContent text="Faça a sua reserva" icon={<SportsBaseballIcon />} bgcolorAvatar='green'>
+        <WrapperContent text="Faça uma reserva" icon={<SportsBaseballIcon />} bgcolorAvatar='green'>
             <Box sx={{ width: '100%' }}>
                 <Stepper activeStep={activeStep} orientation="vertical">
                     {steps.map((step, index) => (
@@ -283,14 +324,22 @@ const FrameUserHome = ({ nextAction }) => {
                     </Button>
                 )}
             </Box>
-            <Button onClick={() => { dispatch({ type: 'SET_STAGE', payload: 'userReservations' }) }}>
-                Já possui reserva? Clique aqui
-            </Button>
-            <Button variant="contained" color="error" onClick={() => { dispatch({ type: 'SET_STAGE', payload: 'login' }) }}>
-                Sair
-            </Button>
+            <Box sx={{ display: 'flex', gap: 1 }}>
+                <Button
+                    variant="contained"
+                    color="success"
+                    onClick={() => { dispatch({ type: 'SET_STAGE', payload: 'adminReservations' }) }}>
+                    Menu
+                </Button>
+                <Button
+                    variant="contained"
+                    color="error"
+                    onClick={() => { dispatch({ type: 'SET_STAGE', payload: 'login' }) }}>
+                    Sair
+                </Button>
+            </Box>
         </WrapperContent>
     );
 };
 
-export default FrameUserHome;
+export default FrameAdminSchedule;
