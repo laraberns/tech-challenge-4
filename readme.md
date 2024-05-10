@@ -104,10 +104,10 @@ O projeto está estruturado da seguinte forma:
 #### Home ->
 ![tela home de administrador](assets-readme/adminHome.png)
 #### Reservas ->
-![alt text](assets-readme/adminReservas.png)
+![tela de reservas de administrador](assets-readme/adminReservas.png)
 #### Cadastrar reserva ->
-![alt text](assets-readme/adminReservar.png)
+![tela de cadastrar reservas de administrador](assets-readme/adminReservar.png)
 #### Quadras ->
-![alt text](assets-readme/adminQuadras.png)
+![tela de quadras de administrador](assets-readme/AdminQuadras.png)
 #### Cadastrar quadra ->
-![alt text](assets-readme/adminNovaQuadra.png)
+![tela de cadastrar quadra de administrador](assets-readme/adminNovaQuadra.png)
