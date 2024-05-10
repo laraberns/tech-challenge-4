@@ -14,6 +14,8 @@ Este projeto foi desenvolvido para solucionar o desafio do agendamento de espaç
 
 5. **Material-UI (MUI)**: O Material-UI é uma biblioteca de componentes React que implementa o Material Design, fornecendo componentes pré-projetados para facilitar o desenvolvimento da interface do usuário com um design atraente e responsivo.
 
+5. **Swagger para Documentação de API**: O Swagger foi utilizado para documentar as APIs criadas no projeto. O Swagger oferece uma maneira padronizada de definir a estrutura, os endpoints e os parâmetros das APIs, permitindo gerar automaticamente documentação detalhada a partir do código-fonte
+
 ## Funcionalidades-Chave:
 
 1. **Reserva de Horários Específicos**: Os usuários podem reservar horários específicos em uma quadra escolhida, indicando a data e o horário desejados.

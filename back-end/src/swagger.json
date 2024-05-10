@@ -1,0 +1,558 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "title": "PlayQuadras APIs",
+      "version": "0.1",
+      "description": "Mapeamento de APIs usadas no projeto Tech Challenge 4 da PosTech/Fiap."
+    },
+    "servers": [
+      {
+        "url": "http://localhost:8081/"
+      }
+    ],
+    "components": {
+      "schemas": {
+        "Quadra": {
+            "type": "object",
+            "required": ["nome", "ativo", "horarioInicial", "horarioFinal"],
+            "properties": {
+              "nome": {
+                "type": "string",
+                "description": "O nome da quadra"
+              },
+              "ativo": {
+                "type": "boolean",
+                "description": "Se a quadra está ativa ou não"
+              },
+              "horarioInicial": {
+                "type": "string",
+                "pattern": "^([01]?[0-9]|2[0-3]):[0-5][0-9]$",
+                "description": "O horário de início de funcionamento da quadra (HH:mm)"
+              },
+              "horarioFinal": {
+                "type": "string",
+                "pattern": "^([01]?[0-9]|2[0-3]):[0-5][0-9]$",
+                "description": "O horário de encerramento de funcionamento da quadra (HH:mm)"
+              },
+              "observacoes": {
+                "type": "string",
+                "description": "Observações adicionais sobre a quadra"
+              }
+            }},
+        "Reserva": {
+          "type": "object",
+          "required": ["dataHoraInicio", "dataHoraFinal", "userId", "quadraId"],
+          "properties": {
+            "dataHoraInicio": {
+              "type": "string",
+              "format": "date-time",
+              "description": "A data e hora de início da reserva"
+            },
+            "dataHoraFinal": {
+              "type": "string",
+              "format": "date-time",
+              "description": "A data e hora de término da reserva"
+            },
+            "userId": {
+              "type": "integer",
+              "description": "O ID do usuário que fez a reserva"
+            },
+            "quadraId": {
+              "type": "integer",
+              "description": "O ID da quadra reservada"
+            },
+            "observacoes": {
+              "type": "string",
+              "description": "Observações adicionais sobre a reserva"
+            }
+          }
+        },
+        "User": {
+          "type": "object",
+          "required": ["email", "password", "type"],
+          "properties": {
+            "email": {
+              "type": "string",
+              "format": "email",
+              "description": "O endereço de e-mail do usuário"
+            },
+            "password": {
+              "type": "string",
+              "description": "A senha do usuário. Deve ter pelo menos 1 número e 8 caracteres.",
+              "pattern": "^(?=.*[0-9])(?=.*[a-zA-Z]).{8,}$"
+            },
+            "type": {
+              "type": "string",
+              "enum": ["client", "admin"],
+              "description": "O tipo de usuário (cliente ou administrador)"
+            }
+          }
+        }
+      }
+    },
+    "paths": {
+      "/api/quadras/addQuadra": {
+        "post": {
+          "summary": "Cria uma nova quadra",
+          "tags": ["Quadras"],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Quadra"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Quadra criada com sucesso"
+            },
+            "400": {
+              "description": "Já existe uma quadra com este nome"
+            },
+            "500": {
+              "description": "Erro ao criar a nova quadra. Tente novamente."
+            }
+          }
+        }
+      },
+      "/api/quadras/allQuadras": {
+        "get": {
+          "summary": "Obtém todas as quadras",
+          "tags": ["Quadras"],
+          "responses": {
+            "200": {
+              "description": "Lista de todas as quadras"
+            },
+            "500": {
+              "description": "Erro ao buscar as quadras"
+            }
+          }
+        }
+      },
+      "/api/quadras/{id}": {
+        "get": {
+          "summary": "Obtém uma quadra pelo ID",
+          "tags": ["Quadras"],
+          "parameters": [
+            {
+              "in": "path",
+              "name": "id",
+              "required": true,
+              "description": "ID da quadra a ser obtida",
+              "schema": {
+                "type": "integer",
+                "format": "int64"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Quadra encontrada",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Quadra"
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Quadra não encontrada"
+            },
+            "500": {
+              "description": "Erro ao buscar a quadra"
+            }
+          }
+        },
+        "put": {
+          "summary": "Atualiza uma quadra pelo ID",
+          "tags": ["Quadras"],
+          "parameters": [
+            {
+              "in": "path",
+              "name": "id",
+              "required": true,
+              "description": "ID da quadra a ser atualizada",
+              "schema": {
+                "type": "integer",
+                "format": "int64"
+              }
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Quadra"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Quadra atualizada com sucesso"
+            },
+            "404": {
+              "description": "Quadra não encontrada"
+            },
+            "500": {
+              "description": "Erro ao atualizar a quadra"
+            }
+          }
+        },
+        "delete": {
+          "summary": "Remove uma quadra pelo ID",
+          "tags": ["Quadras"],
+          "parameters": [
+            {
+              "in": "path",
+              "name": "id",
+              "required": true,
+              "description": "ID da quadra a ser removida",
+              "schema": {
+                "type": "integer",
+                "format": "int64"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Quadra removida com sucesso"
+            },
+            "404": {
+              "description": "Quadra não encontrada"
+            },
+            "500": {
+              "description": "Erro ao remover a quadra"
+            }
+          }
+        }
+      },
+      "/api/users/addUser": {
+        "post": {
+          "summary": "Cria um novo usuário",
+          "tags": ["Usuários"],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Usuário criado com sucesso"
+            },
+            "400": {
+              "description": "Já existe um usuário com este e-mail"
+            },
+            "500": {
+              "description": "Erro ao criar o novo usuário. Tente novamente."
+            }
+          }
+        }
+      },
+      "/api/users/{email}": {
+        "get": {
+          "summary": "Obtém um usuário pelo e-mail",
+          "tags": ["Usuários"],
+          "parameters": [
+            {
+              "in": "path",
+              "name": "email",
+              "required": true,
+              "description": "E-mail do usuário a ser obtido",
+              "schema": {
+                "type": "string",
+                "format": "email"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Usuário encontrado",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Usuário não encontrado"
+            },
+            "500": {
+              "description": "Erro ao buscar o usuário"
+            }
+          }
+        }
+      },
+      "/api/users/all/users": {
+        "get": {
+          "summary": "Obtém todos os usuários",
+          "tags": ["Usuários"],
+          "responses": {
+            "200": {
+              "description": "Lista de todos os usuários"
+            },
+            "500": {
+              "description": "Erro ao buscar os usuários"
+            }
+          }
+        }
+      },
+      "/api/users/verifyUser": {
+        "post": {
+          "summary": "Verifica as credenciais do usuário",
+          "tags": ["Usuários"],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "email": {
+                      "type": "string",
+                      "format": "email",
+                      "description": "O endereço de e-mail do usuário"
+                    },
+                    "password": {
+                      "type": "string",
+                      "description": "A senha do usuário"
+                    }
+                  },
+                  "required": ["email", "password"]
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Credenciais verificadas com sucesso",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "userType": {
+                        "type": "string",
+                        "enum": ["client", "admin"],
+                        "description": "O tipo de usuário (cliente ou administrador)"
+                      },
+                      "userId": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "O ID do usuário"
+                      }
+                    },
+                    "required": ["userType", "userId"]
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Credenciais incorretas"
+            },
+            "404": {
+              "description": "Usuário não encontrado"
+            },
+            "500": {
+              "description": "Erro interno do servidor"
+            }
+          }
+        }
+      },
+      "/api/reservas/addReserva": {
+        "post": {
+          "summary": "Cria uma nova reserva",
+          "tags": ["Reservas"],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Reserva"
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "Reserva criada com sucesso"
+            },
+            "400": {
+              "description": "A reserva está fora do horário de funcionamento da quadra ou já existe uma reserva para esta quadra no mesmo intervalo de tempo"
+            },
+            "404": {
+              "description": "Quadra não encontrada"
+            },
+            "500": {
+              "description": "Erro ao criar a nova reserva. Tente novamente."
+            }
+          }
+        }
+      },
+      "/api/reservas/allReservas": {
+        "get": {
+          "summary": "Obtém todas as reservas",
+          "tags": ["Reservas"],
+          "responses": {
+            "200": {
+              "description": "Lista de todas as reservas"
+            },
+            "500": {
+              "description": "Erro ao buscar as reservas"
+            }
+          }
+        }
+      },
+      "/api/reservas/availableTimes": {
+        "post": {
+          "summary": "Obtém horários disponíveis para uma quadra em um determinado dia",
+          "tags": ["Reservas"],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "quadraId": {
+                      "type": "integer",
+                      "description": "ID da quadra"
+                    },
+                    "quantidadeHoras": {
+                      "type": "integer",
+                      "description": "Quantidade de horas desejadas"
+                    },
+                    "dia": {
+                      "type": "string",
+                      "format": "date",
+                      "description": "Data desejada (formato: YYYY-MM-DD)"
+                    }
+                  },
+                  "required": ["quadraId", "quantidadeHoras", "dia"]
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Lista de horários disponíveis"
+            },
+            "400": {
+              "description": "Quadra não encontrada ou data inválida"
+            },
+            "500": {
+              "description": "Erro ao buscar os horários disponíveis. Tente novamente."
+            }
+          }
+        }
+      },
+      "/api/reservas/{userId}": {
+        "get": {
+          "summary": "Obtém todas as reservas de um usuário pelo ID",
+          "tags": ["Reservas"],
+          "parameters": [
+            {
+              "in": "path",
+              "name": "userId",
+              "required": true,
+              "description": "ID do usuário"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Lista de todas as reservas do usuário"
+            },
+            "500": {
+              "description": "Erro ao buscar as reservas do usuário. Tente novamente."
+            }
+          }
+        }
+      },
+      "/api/reservas/{id}": {
+        "delete": {
+          "summary": "Remove uma reserva pelo ID",
+          "tags": ["Reservas"],
+          "parameters": [
+            {
+              "in": "path",
+              "name": "id",
+              "required": true,
+              "description": "ID da reserva a ser removida",
+              "schema": {
+                "type": "integer",
+                "format": "int64"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Reserva removida com sucesso"
+            },
+            "404": {
+              "description": "Reserva não encontrada"
+            },
+            "500": {
+              "description": "Erro ao remover a reserva. Tente novamente."
+            }
+          }
+        },
+        "put": {
+          "summary": "Atualiza uma reserva pelo ID",
+          "tags": ["Reservas"],
+          "parameters": [
+            {
+              "in": "path",
+              "name": "id",
+              "required": true,
+              "description": "ID da reserva a ser atualizada",
+              "schema": {
+                "type": "integer",
+                "format": "int64"
+              }
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "observacoes": {
+                      "type": "string",
+                      "description": "As novas observações da reserva"
+                    }
+                  },
+                  "required": ["observacoes"]
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Reserva atualizada com sucesso"
+            },
+            "404": {
+              "description": "Reserva não encontrada"
+            },
+            "500": {
+              "description": "Erro ao atualizar a reserva. Tente novamente."
+            }
+          }
+        }
+      }      
+    }
+  }
+  
