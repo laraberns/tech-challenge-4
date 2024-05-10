@@ -41,35 +41,23 @@ Este projeto foi desenvolvido para solucionar o desafio do agendamento de espaç
 
 O projeto está estruturado da seguinte forma:
 
-- `back-end/`: Contém o código fonte do back-end em Node.js.
-- `front-end/`: Contém o código fonte do front-end em React.
+- `back-end`: Contém o código fonte do back-end em Node.js.
+- `front-end`: Contém o código fonte do front-end em React.
 
 ## Como Executar o Projeto:
 
 1. Clone o repositório do GitHub.
-2. Configure e inicie o back-end:
-   ```bash
-   cd back-end
-   npm install
-   npm start
-   ```
 
-3. Configure e inicie o front-end:
-    ```bash
-    cd front-end
-    npm install
-    npm run dev
-    ```
+2. Configure as variáveis de ambiente. Crie os arquivos **.env** para cada diretório (back-end e front-end):
 
-4. Configure e inicie o banco de dados PostgreSQL.
+    ![estrutura de pastas do diretório](assets-readme/env.png)
 
-5. Arquivo **.env**:
 - Front-end
     ```bash
-   API_URL=url_da_sua_api
+   API_URL=http://localhost:8081
    ```
 
-- Back-end
+- Back-end -> Dados referente a conexão com POSTGRESQL
     ```bash
     DB_NAME=nome_do_banco_de_dados
     DB_USER=nome_do_usuario_do_banco
@@ -77,14 +65,24 @@ O projeto está estruturado da seguinte forma:
     DB_HOST=host_do_usuario_do_banco
     ```
 
+3. Configure e inicie o back-end:
+   ```bash
+   cd back-end
+   npm install
+   nodemon src/server.js
+   ```
 
-6. Acesse o aplicativo através do navegador.
+4. Configure e inicie o front-end:
+    ```bash
+    cd front-end
+    npm install
+    npm run dev
+    ```
+
+5. Acesse o aplicativo através do navegador.
 
 ## Links Importantes:
-
-- [Repositório GitHub](https://github.com/laraberns/tech-challenge-4)
-- Documentação da API
-- Relatório Técnico
+- [Documentação da API](https://github.com/laraberns/tech-challenge-4/blob/main/back-end/src/swagger.json)
 
 ## Telas do sistema:
 
