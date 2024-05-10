@@ -46,9 +46,13 @@ O projeto está estruturado da seguinte forma:
 
 ## Como Executar o Projeto:
 
-1. Clone o repositório do GitHub.
+1. Clone o repositório do GitHub
 
-2. Configure as variáveis de ambiente. Crie os arquivos **.env** para cada diretório (back-end e front-end):
+2. Crie um banco de dados no PostgreSQL
+
+    ![banco de dados postgresql](assets-readme/bd.png)
+
+3. Configure as variáveis de ambiente. Crie os arquivos **.env** para cada diretório (back-end e front-end)
 
     ![estrutura de pastas do diretório](assets-readme/env.png)
 
@@ -57,7 +61,7 @@ O projeto está estruturado da seguinte forma:
    API_URL=http://localhost:8081
    ```
 
-- Back-end -> Dados referente a conexão com POSTGRESQL
+- Back-end -> Dados referente a conexão com PostgreSQL
     ```bash
     DB_NAME=nome_do_banco_de_dados
     DB_USER=nome_do_usuario_do_banco
@@ -65,21 +69,21 @@ O projeto está estruturado da seguinte forma:
     DB_HOST=host_do_usuario_do_banco
     ```
 
-3. Configure e inicie o back-end:
+4. Configure e inicie o back-end
    ```bash
    cd back-end
    npm install
    nodemon src/server.js
    ```
 
-4. Configure e inicie o front-end:
+5. Configure e inicie o front-end
     ```bash
     cd front-end
     npm install
     npm run dev
     ```
 
-5. Acesse o aplicativo através do navegador.
+6. Acesse o aplicativo através do navegador
 
 ## Links Importantes:
 - [Documentação da API](https://github.com/laraberns/tech-challenge-4/blob/main/back-end/src/swagger.json)
